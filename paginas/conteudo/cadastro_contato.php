@@ -69,7 +69,7 @@
                 </div>
               </form>
               <?php
-include('config/conexao.php'); // Inclui o arquivo de conexão com o banco de dados
+include('../config/conexao.php'); // Inclui o arquivo de conexão com o banco de dados
 
 // Verifica se o formulário foi enviado
 if (isset($_POST['botao'])) {
