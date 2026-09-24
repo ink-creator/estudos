@@ -49,6 +49,10 @@ include_once('sair.php');
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <link rel="stylesheet" href="../dist/css/estilo.css">
+  <!-- 1. Inclusão dos recursos CSS do DataTables no cabeçalho -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
 </head>
 <?php
 // Inclui o arquivo de configuração de conexão com o banco de dados
