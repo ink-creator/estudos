@@ -75,8 +75,10 @@ include('../config/conexao.php'); // Inclui o arquivo de conexão com o banco de
 if (isset($_POST['botao'])) {
     // Recebe os dados do formulário
     $nome = $_POST['nome'];
+    $telefone = $_POST['telefone'];
     $email = $_POST['email'];
-    $senha = password_hash($_POST['senha'], PASSWORD_DEFAULT); // Usando hash seguro para a senha
+    $id_user = $_POST['id_user'] ?? null;
+    $novoNome = 'avatar-padrao.png';
 
     // Verifica se foi enviado algum arquivo de foto
     if (!empty($_FILES['foto']['name'])) {
@@ -85,14 +87,12 @@ if (isset($_POST['botao'])) {
 
         // Verifica se a extensão do arquivo está nos formatos permitidos
         if (in_array(strtolower($extensao), $formatosPermitidos)) {
-            $pasta = "img/"; // Define o diretório para upload
+            $pasta = __DIR__ . '/../../img/cont/'; // Define o diretório real para upload do contato
             $temporario = $_FILES['foto']['tmp_name']; // Caminho temporário do arquivo
             $novoNome = uniqid() . ".$extensao"; // Gera um nome único para o arquivo
 
             // Move o arquivo para o diretório de imagens
-            if (move_uploaded_file($temporario, $pasta . $novoNome)) {
-                // Sucesso no upload da imagem
-            } else {
+            if (!move_uploaded_file($temporario, $pasta . $novoNome)) {
                 echo '<div class="container">
                         <div class="alert alert-danger alert-dismissible">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -100,7 +100,7 @@ if (isset($_POST['botao'])) {
                             Não foi possível fazer o upload do arquivo.
                         </div>
                     </div>';
-                exit(); // Termina a execução do script após o erro
+                exit();
             }
         } else {
             echo '<div class="container">
@@ -110,22 +110,20 @@ if (isset($_POST['botao'])) {
                         Formato de arquivo não permitido.
                     </div>
                 </div>';
-            exit(); // Termina a execução do script após o erro
+            exit();
         }
-    } else {
-        // Define um avatar padrão caso não seja enviado nenhum arquivo de foto
-        $novoNome = 'avatar-padrao.png'; // Nome do arquivo de avatar padrão
     }
 
-    // Prepara a consulta SQL para inserção dos dados do usuário
-    $cadastro = "INSERT INTO tb_user (foto_user, nome_user, email_user, senha_user) VALUES (:foto, :nome, :email, :senha)";
+    // Prepara a consulta SQL para inserção do contato na tabela correta
+    $cadastro = "INSERT INTO tb_contatos (nome_contatos, fone_contatos, email_contatos, foto_contatos, id_user) VALUES (:nome, :telefone, :email, :foto, :id_user)";
 
     try {
         $result = $conect->prepare($cadastro);
         $result->bindParam(':nome', $nome, PDO::PARAM_STR);
+        $result->bindParam(':telefone', $telefone, PDO::PARAM_STR);
         $result->bindParam(':email', $email, PDO::PARAM_STR);
-        $result->bindParam(':senha', $senha, PDO::PARAM_STR);
         $result->bindParam(':foto', $novoNome, PDO::PARAM_STR);
+        $result->bindParam(':id_user', $id_user, PDO::PARAM_INT);
         $result->execute();
         $contar = $result->rowCount();
 
@@ -198,26 +196,13 @@ if (isset($_POST['botao'])) {
                     ?>
                             <tr>
                                 <td><?php echo $cont++;?></td>
-                                <td>
-                                <?php
-                                // PASSO 4: Checa se a foto cadastrada é o avatar padrão
-                                if ($show->foto_contatos == 'avatar-padrao.png') {
-                                    // Exibe a imagem salva na pasta de avatares padrões
-                                    echo '<img src="../../img/avatar_p/' . $show->foto_contatos . '" alt="' . $show->foto_contatos . '" title="' . $show->foto_contatos . '" style="width: 50px; border-radius: 100%;">';
-                                } else {
-                                    // Exibe a imagem enviada pelo usuário na pasta de contatos
-                                    echo '<img src="../../img/cont/' . $show->foto_contatos . '" alt="' . $show->foto_contatos . '" title="' . $show->foto_contatos . '" style="width: 50px; border-radius: 100%;">';
-                                }
-                                ?>  
-                              </td>
                                 <td><?php echo $show->nome_contatos;?></td>
                                 <td><?php echo $show->fone_contatos;?></td>
                                 <td><?php echo $show->email_contatos;?></td>
-                                <td><?php echo $show->foto_contatos;?></td>
+                              <td>
                                 <div class="btn-group">
-                                    <!-- Botões de Ação para cada contato -->
-                                    <a href="home.php?acao=editar&id=<?php echo $show->id_contatos;?>" class="btn btn-success" title="Editar Contato"><i class="fas fa-user-edit"></i></a>
-                                    <a href="conteudo/del-contato.php?idDel=<?php echo $show->id_contatos;?>" onclick="return confirm('Deseja remover o contato')" class="btn btn-danger" title="Remover Contato"><i class="fas fa-user-times"></i></a>
+                                <a href="home.php?acao=editar&id=<?php echo $show->id_contatos;?>" class="btn btn-success" title="Editar Contato"><i class="fas fa-user-edit"></i></a>
+                                <a href="conteudo/del-contato.php?idDel=<?php echo $show->id_contatos;?>" onclick="return confirm('Deseja remover o contato')" class="btn btn-danger" title="Remover Contato"><i class="fas fa-user-times"></i></a>
                                 </div>
                                 </td>
                             </tr>

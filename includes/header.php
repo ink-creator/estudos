@@ -26,6 +26,7 @@ include_once('sair.php');
   <!-- DataTables -->
   <link rel="stylesheet" href="../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -158,12 +159,9 @@ try {
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
           <?php
-            // Verifica se a variável $foto_user é igual a 'avatar-padrao.png'
             if ($foto_user == 'avatar-padrao.png') {
-                // Exibe a imagem do avatar padrão
                 echo '<img src="../img/avatar_p/' . $foto_user . '" alt="' . $foto_user . '" title="' . $foto_user . '" style="width: 40px; border-radius: 100%;">';
             } else {
-                // Exibe a imagem do usuário
                 echo '<img src="../img/user/' . $foto_user . '" alt="' . $foto_user . '" title="' . $foto_user . '" style="width: 40px; border-radius: 100%;">';
             }
           ?>
